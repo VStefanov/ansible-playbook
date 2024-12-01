@@ -1,0 +1,13 @@
+---
+- name: Create a DB instance using the default AWS KMS encryption key
+  amazon.aws.rds_instance:
+    id: test-encrypted-db
+    state: present
+    engine: "{{ db.engine }}"
+    db_name: "{{ db.db_name }}"
+    storage_encrypted: true
+    db_instance_class: "{{ db.instance_type }}"
+    username: "{{ db.username }}"
+    password: "{{ db.password }}"
+    allocated_storage: "{{ db.allocated_storage }}"
+...

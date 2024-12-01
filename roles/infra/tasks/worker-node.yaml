@@ -1,0 +1,14 @@
+---
+- name: Create EC2 Worker Node
+  amazon.aws.ec2_instance:
+    name: "ansible-worker-node"
+    instance_type: "{{ ec2.instance_type }}"
+    image_id: "{{ ec2.ami_id }}"
+    vpc_subnet_id: "{{ public_subnet.subnet.id }}"
+    exact_count: 2
+    region: "{{ aws_region }}"
+    key_name: ansible-key-pair
+    security_group: "{{ app_sg.group_id }}"
+    state: present
+  register: ec2
+...

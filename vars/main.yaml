@@ -1,0 +1,25 @@
+aws_region: "eu-west-1"
+vpc_cidr: "10.0.0.0/16"
+
+subnets:
+  public:
+    cidr: "10.0.1.0/24"
+  app:
+    cidr: "10.0.2.0/24"
+  db:
+    cidr: "10.0.3.0/24"
+
+control_node:
+  security_group:
+    id: ""
+
+db:
+  instance_type: "db.t3.medium"
+  engine: "mysql"
+  username: "testadmin"
+  db_name: "myapp"
+  allocated_storage: 20
+
+ec2:
+  ami_id: "ami-0866a3c8686eaeeba"
+  instance_type: "t2.micro"

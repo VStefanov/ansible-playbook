@@ -1,0 +1,20 @@
+- name: Setup Ansible Control Node
+  hosts: localhost
+  tasks:
+    - name: Install necessary tools
+      ansible.builtin.yum:
+        name:
+          - python3
+          - python3-pip
+          - git
+        state: present
+
+    - name: Install Ansible
+      pip:
+        name: ansible
+
+    - name: Install AWS dependencies
+      pip:
+        name:
+          - boto3
+          - botocore
