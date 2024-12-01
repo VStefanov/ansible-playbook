@@ -1,0 +1,12 @@
+---
+- name: Create AWS Infrastructure
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - ../vars/main.yml
+    - ../vars/vault.yml
+  roles:
+    - vpc
+    - control-node
+    - worker-node
+    - rds
