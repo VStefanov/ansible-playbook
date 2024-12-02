@@ -3,10 +3,10 @@
   hosts: localhost
   gather_facts: no
   vars_files:
-    - ../vars/main.yml
+    - ../vars/aws.yml
     - ../vars/vault.yml
   roles:
     - vpc
     - control-node
     - worker-node
-    - rds
+    - database
