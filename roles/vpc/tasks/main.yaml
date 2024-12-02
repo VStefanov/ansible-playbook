@@ -18,38 +18,29 @@
   amazon.aws.ec2_vpc_subnet:
     state: present
     vpc_id: "{{ vpc.vpc.id }}"
-    cidr: "{{ subnets.public.cidr }}"
+    cidr: "{{ item }}"
     region: "{{ aws_region }}"
     map_public: yes
-  register: public_subnet
+  loop: "{{ subnets.public }}"
+  register: public_subnets
 
 - name: Create App Subnets
   amazon.aws.ec2_vpc_subnet:
     state: present
     vpc_id: "{{ vpc.vpc.id }}"
-    cidr: "{{ subnets.app.cidr }}"
+    cidr: "{{ item }}"
     region: "{{ aws_region }}"
-  register: app_subnet
+  loop: "{{ subnets.app }}"
+  register: app_subnets
 
 - name: Create DB Subnets
   amazon.aws.ec2_vpc_subnet:
     state: present
     vpc_id: "{{ vpc.vpc.id }}"
-    cidr: "{{ subnets.db.cidr }}"
+    cidr: "{{ item }}"
     region: "{{ aws_region }}"
-  register: db_subnet
-
-- name: Create Public Route Table
-  amazon.aws.ec2_vpc_route_table:
-    state: present
-    vpc_id: "{{ vpc.vpc.id }}"
-    region: "{{ aws_region }}"
-    subnets:
-      - "{{ public_subnet.subnet.id }}"
-    routes:
-      - dest: 0.0.0.0/0
-        gateway_id: "{{ igw.gateway_id }}"
-  register: public_route_table
+  loop: "{{ subnets.db }}"
+  register: db_subnets
 
 - name: Create NAT Gateway Elastic IP
   amazon.aws.ec2_eip:
@@ -65,12 +56,26 @@
     region: "{{ aws_region }}"
   register: nat_gateway
 
+- name: Create Public Route Table
+  amazon.aws.ec2_vpc_route_table:
+    state: present
+    vpc_id: "{{ vpc.vpc.id }}"
+    region: "{{ aws_region }}"
+    subnets:
+      - "{{ public_subnets.results[0].subnet.id }}"
+      - "{{ public_subnets.results[1].subnet.id }}"
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: "{{ igw.gateway_id }}"
+  register: public_route_table
+
 - name: Create App Route Table
   amazon.aws.ec2_vpc_route_table:
     state: present
     vpc_id: "{{ vpc.vpc.id }}"
     subnets:
-      - "{{ app_subnet.subnet.id }}"
+      - "{{ app_subnets.results[0].subnet.id }}"
+      - "{{ app_subnets.results[1].subnet.id }}"
     routes:
       - dest: 0.0.0.0/0
         gateway_id: "{{ nat_gateway.nat_gateway_id }}"
@@ -82,12 +87,28 @@
     state: present
     vpc_id: "{{ vpc.vpc.id }}"
     subnets:
-      - "{{ db_subnet.subnet.id }}"
+      - "{{ db_subnets.results[0].subnet.id }}"
+      - "{{ db_subnets.results[1].subnet.id }}"
     routes:
       - dest: 0.0.0.0/0
         gateway_id: "{{ nat_gateway.nat_gateway_id }}"
     region: "{{ aws_region }}"
   register: db_route_table
+
+- name: Create ALB Security Group
+  amazon.aws.ec2_security_group:
+    state: present
+    name: alb-sg
+    description: "ALB Security Group"
+    vpc_id: "{{ vpc.vpc.id }}"
+    region: "{{ aws_region }}"
+    rules:
+      - proto: tcp
+        ports:
+          - 80
+        cidr_ip: 0.0.0.0/0
+  register: alb_sg
+
 
 - name: Create Control Node Security Group
   amazon.aws.ec2_security_group:
@@ -114,7 +135,7 @@
       - proto: tcp
         ports:
           - 80
-        cidr_ip: 0.0.0.0/0
+        group_id: "{{ alb_sg.group_id }}"
       - proto: tcp
         ports:
           - 22
