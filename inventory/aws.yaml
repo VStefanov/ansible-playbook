@@ -1,5 +1,0 @@
-plugin: amazon.aws
-regions:
-  - eu-west-1
-hostnames:
-  - tag:Name
