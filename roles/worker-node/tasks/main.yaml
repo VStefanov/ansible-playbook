@@ -4,11 +4,11 @@
     name: "ansible-worker-node"
     instance_type: "{{ ec2.instance_type }}"
     image_id: "{{ ec2.ami_id }}"
-    vpc_subnet_id: "{{ public_subnet.subnet.id }}"
-    exact_count: 2
+    vpc_subnet_id: "{{ item.subnet.id }}"
     region: "{{ aws_region }}"
-    key_name: ansible-key-pair
+    key_name: "{{ aws_ec2_key_pair.key.name }}"
     security_group: "{{ app_sg.group_id }}"
     state: present
-  register: ec2
+  loop: "{{  app_subnets.results }}"
+  register: ec2_worker_nodes
 ...

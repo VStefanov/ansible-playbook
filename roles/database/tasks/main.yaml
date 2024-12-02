@@ -1,13 +1,26 @@
 ---
 - name: Create a DB instance using the default AWS KMS encryption key
   amazon.aws.rds_instance:
-    id: test-encrypted-db
+    id: ansible-rds
     state: present
     engine: "{{ db.engine }}"
     db_name: "{{ db.db_name }}"
+    db_security_groups:
+      - "{{ db_sg.group_id }}"
+    db_subnet_group_name: "{{ rds_subnet_group.subnet_group.name }}"
     storage_encrypted: true
     db_instance_class: "{{ db.instance_type }}"
     username: "{{ db.username }}"
     password: "{{ db.password }}"
     allocated_storage: "{{ db.allocated_storage }}"
+  register: rds
+
+- name: Add RDS DB Subnet Group
+  amazon.aws.rds_subnet_group:
+    state: present
+    name: "ansible-rds-subnet-group"
+    description: RDS Subnet Group
+    subnets:
+      - "{{ db_subnets.results[0].subnet.id }}"
+      - "{{ db_subnets.results[1].subnet.id }}"
 ...
