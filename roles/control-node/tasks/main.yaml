@@ -7,8 +7,8 @@
     vpc_subnet_id: "{{ public_subnet.subnet.id }}"
     exact_count: 2
     region: "{{ aws_region }}"
-    key_name: ansible-key-pair
+    key_name: "{{ aws_ec2_key_pair.key.name }}"
     security_group: "{{ control_node_sg.group_id }}"
     state: present
-  register: control_node
+  register: ec2_control_node
 ...

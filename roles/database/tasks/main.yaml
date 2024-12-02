@@ -10,4 +10,5 @@
     username: "{{ db.username }}"
     password: "{{ db.password }}"
     allocated_storage: "{{ db.allocated_storage }}"
+  register: rds
 ...
