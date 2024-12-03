@@ -4,6 +4,6 @@
   amazon.aws.ec2_key:
     name: "ansible-aws-key"
     region: "{{ aws_region }}"
-   register: aws_ec2_key_pair 
-
+  register: aws_ec2_key_pair 
+  
 ...
