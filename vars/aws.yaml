@@ -12,17 +12,22 @@ subnets:
     - "10.0.5.0/24"
     - "10.0.6.0/24"
 
+availability_zones:
+    - "eu-west-1a"
+    - "eu-west-1b"
+
 control_node:
   security_group:
     id: ""
 
-db:
+database:
   instance_type: "db.t3.medium"
   engine: "mysql"
   username: "testadmin"
-  db_name: "myapp"
+  name: "myapp"
   allocated_storage: 20
 
 ec2:
   ami_id: "ami-0d64bb532e0502c46" # Ubuntu Server 24.04
   instance_type: "t2.micro"
+  key_name: "ansible-key" # This is already created manually

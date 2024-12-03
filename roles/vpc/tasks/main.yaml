@@ -18,28 +18,37 @@
   amazon.aws.ec2_vpc_subnet:
     state: present
     vpc_id: "{{ vpc.vpc.id }}"
-    cidr: "{{ item }}"
+    cidr: "{{ item.0 }}"
+    az: "{{ item.1 }}"
     region: "{{ aws_region }}"
     map_public: yes
-  loop: "{{ subnets.public }}"
+  with_together: 
+    - "{{ subnets.public }}"
+    - "{{ availability_zones }}"
   register: public_subnets
 
 - name: Create App Subnets
   amazon.aws.ec2_vpc_subnet:
     state: present
     vpc_id: "{{ vpc.vpc.id }}"
-    cidr: "{{ item }}"
+    cidr: "{{ item.0 }}"
+    az: "{{ item.1 }}"
     region: "{{ aws_region }}"
-  loop: "{{ subnets.app }}"
+  with_together:
+    - "{{ subnets.app }}"
+    - "{{ availability_zones }}"
   register: app_subnets
 
 - name: Create DB Subnets
   amazon.aws.ec2_vpc_subnet:
     state: present
     vpc_id: "{{ vpc.vpc.id }}"
-    cidr: "{{ item }}"
+    cidr: "{{ item.0 }}"
+    az: "{{ item.1 }}"
     region: "{{ aws_region }}"
-  loop: "{{ subnets.db }}"
+  with_together:
+    - "{{ subnets.db }}"
+    - "{{ availability_zones }}"
   register: db_subnets
 
 - name: Create NAT Gateway Elastic IP
@@ -145,7 +154,7 @@
 - name: Create DB Security Group
   amazon.aws.ec2_security_group:
     state: present
-    name: app-sg
+    name: db-sg
     description: "Database Security Group"
     vpc_id: "{{ vpc.vpc.id }}"
     region: "{{ aws_region }}"

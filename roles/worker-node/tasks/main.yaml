@@ -6,7 +6,7 @@
     image_id: "{{ ec2.ami_id }}"
     vpc_subnet_id: "{{ item.subnet.id }}"
     region: "{{ aws_region }}"
-    key_name: "{{ aws_ec2_key_pair.key.name }}"
+    key_name: "{{ ec2.key_name }}"
     security_group: "{{ app_sg.group_id }}"
     state: present
   loop: "{{  app_subnets.results }}"

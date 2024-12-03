@@ -5,9 +5,9 @@
     instance_type: "{{ ec2.instance_type }}"
     image_id: "{{ ec2.ami_id }}"
     vpc_subnet_id: "{{ public_subnets.results[0].subnet.id }}"
-    exact_count: 2
+    count: 1
     region: "{{ aws_region }}"
-    key_name: "{{ aws_ec2_key_pair.key.name }}"
+    key_name: "{{ ec2.key_name }}"
     security_group: "{{ control_node_sg.group_id }}"
     state: present
   register: ec2_control_node
