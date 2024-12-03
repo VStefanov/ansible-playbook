@@ -4,7 +4,7 @@
     name: "ansible-control-node"
     instance_type: "{{ ec2.instance_type }}"
     image_id: "{{ ec2.ami_id }}"
-    vpc_subnet_id: "{{ public_subnet.subnet.id }}"
+    vpc_subnet_id: "{{ public_subnets.results[0].subnet.id }}"
     exact_count: 2
     region: "{{ aws_region }}"
     key_name: "{{ aws_ec2_key_pair.key.name }}"
