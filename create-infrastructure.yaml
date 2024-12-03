@@ -7,7 +7,6 @@
     - vars/vault.yaml
   roles:
     - vpc
-    - ssh-key
     - control-node
     - worker-node
     - database
