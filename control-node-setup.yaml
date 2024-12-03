@@ -1,20 +1,39 @@
 - name: Setup Ansible Control Node
-  hosts: localhost
+  hosts: control
+  become: true # Privilege escalation for setting up the Control Node
+  become_method: sudo # Privilege escalation for setting up the Control Node
   tasks:
+    - name: Update APT cache
+      apt:
+        update_cache: yes
+
     - name: Install necessary tools
-      ansible.builtin.yum:
+      ansible.builtin.apt:
         name:
           - python3
           - python3-pip
           - git
         state: present
 
-    - name: Install Ansible
-      pip:
-        name: ansible
+    - name: Add Ansible PPA repository
+      apt_repository:
+        repo: ppa:ansible/ansible
+        state: present
 
-    - name: Install AWS dependencies
-      pip:
-        name:
-          - boto3
-          - botocore
+    - name: Update APT cache
+      apt:
+        update_cache: yes
+
+    - name : Install Ansible
+      apt:
+        name: ansible
+        state: present
+    
+    - name: Gather Ansible version
+      setup:
+        filter: "ansible_version"
+
+    - name: Display Ansible version
+      debug:
+        msg: "Installed Ansible version: {{ ansible_version.full }}"
+...
