@@ -1,0 +1,8 @@
+---
+- name: Install Nginx on Ubuntu
+  hosts: workers
+  gather_facts: no
+  become: true
+  roles:
+    - nginx
+...

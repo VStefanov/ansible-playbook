@@ -1,0 +1,72 @@
+- name: Update APT package cache
+  apt:
+    update_cache: yes
+
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: presen
+
+- name: Ensure Nginx is started and enabled
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Install firewalld
+  apt:
+    name: firewalld
+    state: present
+
+- name: Enable and Run Firewalld
+  ansible.builtin.service:
+    name: firewalld
+    enabled: true
+    state: started
+
+- name: firewalld permitt http service
+  ansible.posix.firewalld:
+    service: http
+    permanent: true
+    state: enabled
+    immediate: yes
+
+- name: Create directory for static website
+  file:
+    path: /var/www/static_site
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- name: Copy static website files
+  copy:
+    src: "{{ role_path }}/files/index.html"
+    dest: /var/www/static_site/index.html
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Deploy Nginx configuration
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/sites-available/static_site
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Enable Nginx configuration
+  file:
+    src: /etc/nginx/sites-available/static_site
+    dest: /etc/nginx/sites-enabled/static_site
+    state: link
+
+- name: Remove default Nginx configuration
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Restart Nginx
+  service:
+    name: nginx
+    state: restarted
