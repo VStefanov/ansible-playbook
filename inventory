@@ -7,3 +7,7 @@ localhost ansible_connection=local
 [control:vars]
 ansible_user=<control_node_user>
 ansible_ssh_private_key_file=<pem_key_path>
+
+[workers]
+worker1 ansible_host=<ip_1> ansible_user=ubuntu
+worker2 ansible_host=<ip_2> ansible_user=ubuntu
