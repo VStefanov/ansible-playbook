@@ -1,3 +1,5 @@
+network_cidr: <my_ip|private_network_ip|vpn_cidr>
+
 workers_list:
   - <ip_1>
   - <ip_2>

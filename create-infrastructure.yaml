@@ -5,6 +5,7 @@
   vars_files:
     - vars/aws.yaml
     - vars/vault.yaml
+    - vars/global.yaml
   roles:
     - vpc
     - control-node
