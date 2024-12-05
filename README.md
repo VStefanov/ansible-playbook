@@ -17,11 +17,15 @@ The repository contains the following:
 ## Deployment Steps
 
 **AWS Infrastructure**: The `create-infrastructure` Ansible playbook handles the creation of all AWS resources. It requires an existing EC2 key pair, which should be specified in the `vars/aws.yaml` file under the `ec2.key_name` attribute. This playbooks depends on the following Ansible roles:
-    - `vpc` - Creates all networking settings in AWS, including the VPC, public and private subnets, Internet Gateway, NAT Gateway, route tables, and security groups. These configurations follow best practices by isolating critical resources in private subnets and restricting access to specific security groups and ports.
-    - `control-node` - Creates an EC2 instance in a public subnet to serve as the Ansible Control node. It has a security group which allows access only from specific CIDR ranges set in the `vars/global.yaml` under the `network_cidr` attribute (recommendations - your personal IP or VPN cidr or some specific private network cidr)
-    - `worker-node` - Creates two EC2 instances in a private subnet to serve as Ansible Worker nodes. The instances are assigned a security group that allows access from the Ansible Control node's security group on port 22 and from the ALB's security group on port 80. (This is a playground setup, so HTTPS communication is not configured.)
-    - `database` - Creates an RDS instance in a separate private subnet. The instance is assigned a security group that allows access only from the Worker nodes on port 3306, as it uses MySQL.
-    - `alb` - Creates an Application Load Balancer and a Target Group that registers the Worker nodes with the load balancer. The load balancer is assigned a security group that allows traffic on port 80 from anywhere worldwide. (This is a playground setup, so HTTPS communication is not configured.)
+
+- `vpc` - Creates all networking settings in AWS, including the VPC, public and private subnets, Internet Gateway, NAT Gateway, route tables, and security groups. These configurations follow best practices by isolating critical resources in private subnets and restricting access to specific security groups and ports.
+
+- `control-node` - Creates an EC2 instance in a public subnet to serve as the Ansible Control node. It has a security group which allows access only from specific CIDR ranges set in the `vars/global.yaml` under the `network_cidr` attribute (recommendations - your personal IP or VPN cidr or some specific private network cidr)
+- `worker-node` - Creates two EC2 instances in a private subnet to serve as Ansible Worker nodes. The instances are assigned a security group that allows access from the Ansible Control node's security group on port 22 and from the ALB's security group on port 80. (This is a playground setup, so HTTPS communication is not configured.)
+
+- `database` - Creates an RDS instance in a separate private subnet. The instance is assigned a security group that allows access only from the Worker nodes on port 3306, as it uses MySQL.
+
+- `alb` - Creates an Application Load Balancer and a Target Group that registers the Worker nodes with the load balancer. The load balancer is assigned a security group that allows traffic on port 80 from anywhere worldwide. (This is a playground setup, so HTTPS communication is not configured.)
 
 **Control Node setup**: The setup of the Control node is handled by the `control-node-setup` Ansible Playbook. It relies on the `control-node-setup` role which installs Python, Git and Ansible.
 
