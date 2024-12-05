@@ -1,0 +1,20 @@
+---
+- name: Copy pem EC2 key
+  hosts: localhost
+  vars_files:
+    - vars/aws.yaml
+  tasks:
+    - name: Copy
+      ansible.builtin.copy:
+        src: /home/{{ ansible_user }}/{{ ec2.key_name }}
+        dest: /home/{{ ansible_user }}
+        mode: '0400'
+
+- name: Setup connectivity between the Control and the Worker nodes
+  hosts: control
+  vars_files:
+    - vars/aws.yaml
+    - vars/global.yaml
+  roles:
+    - hosts-connectivity
+...
