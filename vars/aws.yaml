@@ -30,4 +30,4 @@ database:
 ec2:
   ami_id: "ami-0d64bb532e0502c46" # Ubuntu Server 24.04
   instance_type: "t2.micro"
-  key_name: "ansible-key" # This is already created manually
+  key_name: "ansible-key" # This should be created manually
